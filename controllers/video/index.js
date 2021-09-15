@@ -32,6 +32,11 @@ const findVideos = async (req, res) => {
     if (tagQuery !== "") {
       query.tags = { $in: tagQuery };
     }
+
+    const allResults = await Video.find(query).lean();
+    // console.log(allResults).length;
+    // console.log(allResults.length);
+
     // add sort, filter queries...
 
     const videos = await Video.find(query)
@@ -39,7 +44,9 @@ const findVideos = async (req, res) => {
       .skip(startIndex)
       .populate("uploader", "username followers avatar")
       .select("-description -comments");
-    res.status(200).json({ success: true, videos });
+    res
+      .status(200)
+      .json({ success: true, videos, totalResults: allResults.length });
   } catch (error) {
     console.error(error);
     res
@@ -95,6 +102,9 @@ const createVideo = async (req, res) => {
 
 const getVideo = async (req, res) => {
   try {
+    if (req.video instanceof Video) {
+      console.log("true");
+    } else console.log("false");
     res.status(200).json({ success: true, video: req.video });
   } catch (error) {
     console.error(error);

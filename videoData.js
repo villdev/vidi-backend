@@ -52,7 +52,7 @@ const videoData = [
   },
 
   {
-    title: "10 Books EVERY Student Should Read - Essential Book ss",
+    title: "10 Books EVERY Student Should Read - Essential Books",
     url: "https://www.youtube.com/watch?v=SwY3A92s-xg",
     ytId: "SwY3A92s-xg",
     duration: 8.22,
@@ -65,7 +65,7 @@ const videoData = [
     // views: 1605726,
     // likes: 58000,
     // _uploadDate: "2017-06-21",
-    tags: ["ss", "Student"],
+    tags: ["Recommendations", "Student"],
   },
 
   {
