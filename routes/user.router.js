@@ -9,6 +9,7 @@ const {
   toggleChannelFollow,
   getUserAccountDetails,
   editUserAccountDetails,
+  getUserVideoDetails,
 } = require("../controllers/user/index");
 
 router.param("userId", async (req, res, next, userId) => {
@@ -42,5 +43,7 @@ router.post("/follow/:channelId", authVerify, toggleChannelFollow);
 
 router.get("/account/:accountId", authVerify, getUserAccountDetails);
 router.post("/account/:accountId", authVerify, editUserAccountDetails);
+
+router.get("/:userId/video/:videoId", authVerify, getUserVideoDetails);
 
 module.exports = router;

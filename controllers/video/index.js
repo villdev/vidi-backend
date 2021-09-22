@@ -102,9 +102,6 @@ const createVideo = async (req, res) => {
 
 const getVideo = async (req, res) => {
   try {
-    if (req.video instanceof Video) {
-      console.log("true");
-    } else console.log("false");
     res.status(200).json({ success: true, video: req.video });
   } catch (error) {
     console.error(error);
@@ -195,12 +192,15 @@ const toggleVideoLike = async (req, res) => {
     }
 
     const liked = video.likes.includes(userId);
+    // console.log(liked);
     let message = "";
 
     const likedPlaylist = await Playlist.findById(likedPlaylistId);
+    // console.log(likedPlaylist);
 
     if (liked) {
-      video.likes = video.likes.filter((user) => user !== userId);
+      video.likes = video.likes.filter((user) => user != userId);
+      console.log(video.likes);
       likedPlaylist.videos = likedPlaylist.videos.filter(
         (video) => video !== videoId
       );
@@ -212,6 +212,7 @@ const toggleVideoLike = async (req, res) => {
     }
 
     const savedLikedPlaylist = await likedPlaylist.save();
+    // console.log(savedLikedPlaylist);
     const savedVideo = await video.save();
 
     if (!savedLikedPlaylist || !savedVideo) {
@@ -221,7 +222,7 @@ const toggleVideoLike = async (req, res) => {
       });
     }
 
-    res.status(200).json({ success: true, message, video: savedVideo });
+    res.status(200).json({ success: true, message, isLiked: !liked });
   } catch (error) {
     console.error(error);
     res

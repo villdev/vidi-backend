@@ -130,6 +130,8 @@ const crudPlaylist = async (req, res) => {
       }
       case "REMOVE_VIDEO": {
         playlist.videos = playlist.videos.filter((video) => video !== videoId);
+        console.log(playlist._id);
+        console.log(playlist.videos);
         message = "Video removed from playlist";
         break;
       }

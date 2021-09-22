@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { User } = require("../../models/index");
+const { User, Video } = require("../../models/index");
 
 const findChannels = async (req, res) => {
   try {
@@ -111,6 +111,51 @@ const getUserAccountDetails = async (req, res) => {
 
 const editUserAccountDetails = () => {};
 
+const getUserVideoDetails = async (req, res) => {
+  try {
+    const { userId, videoId } = req.params;
+    const videoFound = await Video.findById(videoId).select("uploader");
+    const userFound = await User.findById(userId)
+      .select("following likedVideos watchLater userHistory playlists")
+      .populate("likedVideos", "title videos")
+      .populate("watchLater", "title videos")
+      .populate("userHistory", "title videos")
+      .populate("playlists", "_id title videos");
+    if (!userFound) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found!" });
+    }
+    const isVideoLiked = userFound.likedVideos.videos.includes(videoId);
+    const isChannelFollowed = userFound.following.includes(videoFound.uploader);
+    const isPresentInWatchLater = userFound.watchLater.videos.includes(videoId);
+    const playlistsStatus = userFound.playlists.map((pl) => {
+      const temp = {
+        title: pl.title,
+        id: pl._id,
+        isVideoPresent: false,
+      };
+      if (pl.videos.includes(videoId)) {
+        temp.isVideoPresent = true;
+      }
+      return temp;
+    });
+
+    res.status(200).json({
+      success: true,
+      isVideoLiked,
+      isChannelFollowed,
+      isPresentInWatchLater,
+      playlistsStatus,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(404)
+      .json({ success: false, message: "Error while retrieving user!" });
+  }
+};
+
 module.exports = {
   findChannels,
   getChannelDetails,
@@ -118,4 +163,5 @@ module.exports = {
   toggleChannelFollow,
   getUserAccountDetails,
   editUserAccountDetails,
+  getUserVideoDetails,
 };
